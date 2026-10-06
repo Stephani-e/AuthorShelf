@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   mirror:
+    if: github.repository == 'byteandsecurity/AuthorShelf'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
