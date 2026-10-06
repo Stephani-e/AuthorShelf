@@ -10,7 +10,8 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Push to personal
         run: |
-          git remote add personal https://oauth2:${{ secrets.PERSONAL_TOKEN }}@github.com/Stephani-e/AuthorShelf.git
+          git remote add personal https://x-access-token:${{ secrets.PERSONAL_TOKEN }}@github.com/Stephani-e/AuthorShelf.git
           git push personal HEAD:main --force
