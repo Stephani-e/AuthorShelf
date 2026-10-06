@@ -79,6 +79,7 @@ export default function AuthorProfilePage() {
 
             if (error) throw error
 
+
             setMessage({ type: 'success', text: 'Author profile updated successfully!' })
         } catch (err: any) {
             setMessage({ type: 'error', text: err.message || 'Failed to save profile.' })
