@@ -1,0 +1,21 @@
+name: Mirror to Personal
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Push to Personal
+        run: |
+          git remote add personal https://x-access-token:${{ secrets.PERSONAL_TOKEN }}@github.com/Stephani-e/AuthorShelf.git
+          git push personal HEAD:main --force
