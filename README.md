@@ -3,6 +3,7 @@ An author-first, algorithm-free publishing platform and Progressive Web App (PWA
 Built to give authors complete ownership over their reader experience without competing against marketplace algorithms or distraction-heavy catalogs.
 
 ## Platform Features
+
 ### For Readers
 - **Direct Author Libraries:** Access an author's complete catalog via clean, custom link sharing.
 - **Distraction-Free Reading:** Customizable reader settings (dark/light mode, font scaling, line height, letter spacing).
