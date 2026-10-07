@@ -5,12 +5,12 @@ export default function LandingPage() {
   return (
       <main className="flex min-h-screen flex-col">
         {/* Navigation */}
-        <header className="flex items-center justify-between px-8 py-6">
-          <div className="font-serif text-2xl font-bold tracking-tight">
+        <header className="flex items-center justify-between px-8 py-6 bg-white/70 + backdrop-blur + border-b">
+          <div className="font-serif text-2xl text-white font-bold tracking-tight">
             AuthorShelf.
           </div>
           <div className="flex gap-4">
-            <Link href="/login" className="px-4 py-2 text-sm font-medium hover:text-zinc-600 transition-colors">
+            <Link href="/login" className="px-4 py-2 text-sm font-medium hover:text-white transition-colors">
               Log in
             </Link>
           </div>
