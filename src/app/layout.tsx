@@ -32,6 +32,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${playfair.variable} font-sans bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50`}>
         {children}
         <SpeedInsights />
+
         <Analytics />
       </body>
       </html>
