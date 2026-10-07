@@ -5,7 +5,7 @@ export default function LandingPage() {
   return (
       <main className="flex min-h-screen flex-col">
         {/* Navigation */}
-        <header className="flex items-center justify-between px-8 py-6 bg-white/70 + backdrop-blur + border-b">
+        <header className="flex items-center justify-between px-8 py-6 bg-black + border-b">
           <div className="font-serif text-2xl text-white font-bold tracking-tight">
             AuthorShelf.
           </div>
