@@ -35,10 +35,10 @@ export async function updateSession(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
 
     // ROUTE PROTECTION:
-    // If there is no user, and they are trying to access the dashboard, kick them to login
+    // If there is no user, and they are trying to access the dashboard, kick them to author-login
     if (!user && request.nextUrl.pathname.startsWith('/dashboard')) {
         const url = request.nextUrl.clone()
-        url.pathname = '/login'
+        url.pathname = '/author-login'
         return NextResponse.redirect(url)
     }
 

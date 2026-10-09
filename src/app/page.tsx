@@ -63,7 +63,7 @@ export default function LandingPage() {
               Your fiction, your audience. Publish beautifully crafted chapters, build your brand, and connect with your readers.
             </p>
             <Link
-                href="/dashboard/profile"
+                href="/author-login"
                 className="px-8 py-3 border-2 border-zinc-900 dark:border-white rounded-full font-medium hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-zinc-900 transition-all"
             >
               Start Writing
