@@ -9,10 +9,27 @@ export default function ResetPasswordPage() {
     const router = useRouter()
     const supabase = createClient()
 
+    const [isValidating, setIsValidating] = useState(true)
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session) {
+                // Kick them back to forgot-password if no session exists
+                router.push('/forgot-password?error=Your recovery link has expired. Please request a new one.')
+            } else {
+                setIsValidating(false)
+            }
+        }
+        checkSession()
+    }, [router, supabase])
+
+    // Show nothing (or a spinner) while checking the session to prevent form flicker
+    if (isValidating) return null
 
     // Validation State
     const [pwdChecks, setPwdChecks] = useState({

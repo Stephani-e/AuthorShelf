@@ -5,8 +5,12 @@ export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
 
-    // Allows dynamic redirection if specified, otherwise defaults to profile
-    const next = searchParams.get('next') ?? '/dashboard/profile'
+    let next = searchParams.get('next') ?? '/dashboard/profile'
+
+    // Must start with '/' but MUST NOT start with '//'
+    if (!next.startsWith('/') || next.startsWith('//')) {
+        next = '/dashboard/profile'
+    }
 
     if (code) {
         const supabase = await createClient()

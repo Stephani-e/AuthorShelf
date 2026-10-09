@@ -17,7 +17,7 @@ export default function AuthorTermsPage() {
                 {/* Content */}
                 <article className="prose prose-zinc max-w-none">
                     <h1 className="text-3xl font-serif font-bold text-[#2D4A3E] mb-6">Terms of Use for Authors</h1>
-                    <p className="text-sm text-zinc-500 mb-8">Last Updated: {new Date().toLocaleDateString()}</p>
+                    <p className="text-sm text-zinc-500 mb-8">Last Updated: <span>October 9, 2026</span></p>
 
                     <section className="space-y-6 text-zinc-700">
                         <div>
