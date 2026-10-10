@@ -46,7 +46,7 @@ export default function LoginPage() {
             if (error) throw error
             if (!error) {
                 router.refresh()
-                router.push('/dashboard/profile')
+                router.push('/(author)/dashboard')
             }
         } catch (err: any) {
             setErrorMsg(err.message || 'Invalid login credentials.')

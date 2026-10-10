@@ -57,23 +57,31 @@ export default function SignUpPage() {
         setMessage(null)
 
         try {
-            // Call the Server Action instead of client-side Supabase
             const res = await authorSignUpAction(email, password, username)
 
             if (res?.error) {
                 throw new Error(res.error)
             }
 
-            // Check if user is an existing Google user (returned from Server Action)
-            if (res?.isExistingGoogleUser) {
+            // Standard Existing Account (Email/Password or Unconfirmed)
+            if (res?.isExistingUser) {
                 setMessage({
-                    text: 'This email is already a Google account. You can add a password to the account in your profile settings. If you cannot access your Google account, reach out to Support.',
+                    text: 'An account with this email already exists. Try logging in, or click "Forgot Password" if you need to recover access.',
                     type: 'error'
                 })
                 return
             }
 
-            setMessage({ text: 'Success! Please check your email for the confirmation link.', type: 'success' })
+            // Existing Google OAuth Account
+            if (res?.isExistingGoogleUser) {
+                setMessage({
+                    text: 'This email was registered using Google Sign-In. Please click "Continue with Google" below to log in.',
+                    type: 'error'
+                })
+                return
+            }
+
+            setMessage({ text: 'Success! Please check your email inbox to confirm your account.', type: 'success' })
         } catch (err: any) {
             setMessage({ text: err.message || 'Sign up failed.', type: 'error' })
         } finally {

@@ -8,8 +8,8 @@ export default function AuthorTermsPage() {
 
                 {/* Header & Back Button */}
                 <div className="mb-10 flex items-center justify-between border-b border-zinc-200 pb-6">
-                    <Link href="/author-login" className="flex items-center gap-2 text-sm font-medium text-[#2D4A3E] hover:text-[#1d3028] transition-colors">
-                        <ArrowLeft size={16} /> Back to Log In
+                    <Link href="/author-signup" className="flex items-center gap-2 text-sm font-medium text-[#2D4A3E] hover:text-[#1d3028] transition-colors">
+                        <ArrowLeft size={16} /> Back to Sign Up
                     </Link>
                     <span className="font-serif text-xl font-bold text-[#2D4A3E]">AuthorShelf.</span>
                 </div>

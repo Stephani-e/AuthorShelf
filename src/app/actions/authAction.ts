@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import { z } from 'zod'
 
-// 1. Define strict server-side validation constraints
 const SignUpSchema = z.object({
     email: z.string().email('Invalid email address format.'),
     password: z
@@ -17,15 +16,13 @@ const SignUpSchema = z.object({
         .string()
         .trim()
         .min(1, 'Author name is required.')
-        .max(50, 'Author name cannot exceed 50 characters.') // Prevents payload bloat attacks
+        .max(50, 'Author name cannot exceed 50 characters.')
 })
 
 export async function authorSignUpAction(email: string, password: string, displayName: string) {
-    // 2. Validate input parameters FIRST
     const validation = SignUpSchema.safeParse({ email, password, displayName })
 
     if (!validation.success) {
-        // Return the first validation error immediately before touching Supabase
         return { error: validation.error.issues[0].message }
     }
 
@@ -48,11 +45,27 @@ export async function authorSignUpAction(email: string, password: string, displa
     })
 
     if (error) {
+        const errMsg = error.message.toLowerCase()
+        if (errMsg.includes('already registered') || error.status === 422) {
+            return { isExistingUser: true }
+        }
         return { error: error.message }
     }
 
-    if (data?.user && data.user.identities && data.user.identities.length === 0) {
-        return { isExistingGoogleUser: true }
+    // Check identity providers explicitly if user object is returned
+    if (data?.user) {
+        const identities = data.user.identities || []
+
+        // If identities exist, inspect the provider
+        if (identities.length > 0) {
+            const hasGoogle = identities.some((id: any) => id.provider === 'google')
+            if (hasGoogle) {
+                return { isExistingGoogleUser: true }
+            }
+        } else {
+            // Unconfirmed email/password user or already registered
+            return { isExistingUser: true }
+        }
     }
 
     return { success: true }
