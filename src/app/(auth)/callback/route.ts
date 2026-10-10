@@ -1,27 +1,33 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
-
-    let next = searchParams.get('next') ?? '/dashboard/profile'
-
-    // Must start with '/' but MUST NOT start with '//'
-    if (!next.startsWith('/') || next.startsWith('//')) {
-        next = '/dashboard/profile'
-    }
+    const next = searchParams.get('next') ?? '/reset-password'
 
     if (code) {
-        const supabase = await createClient()
+        const cookieStore = await cookies()
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookies: {
+                    getAll() { return cookieStore.getAll() },
+                    setAll(cookiesToSet) {
+                        cookiesToSet.forEach(({ name, value, options }) =>
+                            cookieStore.set(name, value, options)
+                        )
+                    },
+                },
+            }
+        )
         const { error } = await supabase.auth.exchangeCodeForSession(code)
-
         if (!error) {
-            // Success! Redirect user to their destination
             return NextResponse.redirect(`${origin}${next}`)
         }
     }
 
-    // If the code is missing or exchange failed, send them back to login with an error message
-    return NextResponse.redirect(`${origin}/login?error=Could not authenticate user. Please try again.`)
+    return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
