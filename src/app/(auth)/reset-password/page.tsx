@@ -15,22 +15,6 @@ export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
 
-    useEffect(() => {
-        const checkSession = async () => {
-            const { data: { session } } = await supabase.auth.getSession()
-            if (!session) {
-                // Kick them back to forgot-password if no session exists
-                router.push('/forgot-password?error=Your recovery link has expired. Please request a new one.')
-            } else {
-                setIsValidating(false)
-            }
-        }
-        checkSession()
-    }, [router, supabase])
-
-    // Show nothing (or a spinner) while checking the session to prevent form flicker
-    if (isValidating) return null
-
     // Validation State
     const [pwdChecks, setPwdChecks] = useState({
         length: false,
@@ -38,6 +22,28 @@ export default function ResetPasswordPage() {
         number: false,
         special: false
     })
+
+    useEffect(() => {
+        // Listen for session recovery state reliably
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'PASSWORD_RECOVERY' || session) {
+                setIsValidating(false)
+            } else if (event === 'SIGNED_OUT' || !session) {
+                setTimeout(() => {
+                    router.push('/forgot-password?error=Your recovery link has expired. Please request a new one.')
+                }, 1000)
+            }
+        })
+
+        // Fallback check in case session was already established
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                setIsValidating(false)
+            }
+        })
+
+        return () => subscription.unsubscribe()
+    }, [router, supabase])
 
     // Real-time password validation
     useEffect(() => {
@@ -58,7 +64,6 @@ export default function ResetPasswordPage() {
         setLoading(true)
         setMessage(null)
 
-        // 1. Update the password securely
         const { error } = await supabase.auth.updateUser({
             password: password
         })
@@ -69,18 +74,16 @@ export default function ResetPasswordPage() {
         } else {
             setMessage({ text: 'Password successfully updated! Redirecting...', type: 'success' })
 
-            // 2. Fetch their metadata to see if they are an author or reader
             const { data: { user } } = await supabase.auth.getUser()
             const role = user?.user_metadata?.role
 
             await supabase.auth.signOut({ scope: 'others' })
 
-            // 3. Route them based on their role
             setTimeout(() => {
                 if (role === 'author') {
-                    router.push('/dashboard/profile')
+                    router.push('/dashboard')
                 } else {
-                    router.push('/reader-dashboard') // Or wherever the reader dashboard is
+                    router.push('/reader-dashboard')
                 }
             }, 2000)
         }
@@ -92,6 +95,14 @@ export default function ResetPasswordPage() {
             <span>{text}</span>
         </div>
     )
+
+    if (isValidating) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#EAE6DF] font-sans text-sm text-[#2D4A3E]">
+                Verifying reset token...
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[#EAE6DF] px-4 font-sans">
@@ -131,7 +142,6 @@ export default function ResetPasswordPage() {
                             </button>
                         </div>
 
-                        {/* Password Requirements Checklist */}
                         <div className="mt-3 grid grid-cols-2 gap-2 ml-1">
                             <Requirement met={pwdChecks.length} text="8+ characters" />
                             <Requirement met={pwdChecks.uppercase} text="Uppercase letter" />
